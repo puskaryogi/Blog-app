@@ -1,0 +1,137 @@
+<article class="post-detail">
+    <header class="post-header">
+        <div class="post-author">
+            <img src="<%= post.author.profilePicture %>" alt="<%= post.author.username %>" class="author-avatar">
+            <div class="author-info">
+                <span class="author-name"><%= post.author.username %></span>
+                <span class="post-date">Published on <%= post.date %></span>
+            </div>
+        </div>
+        
+        <h1 class="post-title"><%= post.title %></h1>
+        
+        <% if (currentUser && post.author.id === currentUser.id) { %>
+            <div class="post-actions">
+                <a href="/post/<%= post.id %>/edit" class="btn btn-edit">Edit</a>
+                <form action="/post/<%= post.id %>/delete" method="POST" class="delete-form">
+                    <button type="submit" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
+                </form>
+            </div>
+        <% } %>
+    </header>
+
+    <% if (post.image) { %>
+        <div class="post-image">
+            <img src="<%= post.image %>" alt="<%= post.title %>">
+        </div>
+    <% } %>
+
+    <div class="post-content">
+        <%= post.content %>
+    </div>
+
+    <div class="post-interactions">
+        <div class="interaction-buttons">
+            <button class="btn-interaction <%= post.likes.includes(currentUser?.id) ? 'active' : '' %>" 
+                    onclick="handleLike(<%= post.id %>)" 
+                    data-likes="<%= post.likes.length %>">
+                <i class="fas fa-thumbs-up"></i>
+                <span class="likes-count"><%= post.likes.length %></span>
+            </button>
+            <button class="btn-interaction <%= post.dislikes.includes(currentUser?.id) ? 'active' : '' %>" 
+                    onclick="handleDislike(<%= post.id %>)" 
+                    data-dislikes="<%= post.dislikes.length %>">
+                <i class="fas fa-thumbs-down"></i>
+                <span class="dislikes-count"><%= post.dislikes.length %></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="comments-section">
+        <h2 class="comments-title">Comments</h2>
+        
+        <% if (currentUser) { %>
+            <form action="/post/<%= post.id %>/comment" method="POST" class="comment-form">
+                <div class="form-group">
+                    <textarea name="content" required class="form-control" placeholder="Write a comment..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        <% } else { %>
+            <p class="login-prompt">Please <a href="/login">login</a> to comment</p>
+        <% } %>
+
+        <div class="comments-list">
+            <% post.comments.forEach(comment => { %>
+                <div class="comment">
+                    <div class="comment-author">
+                        <img src="<%= comment.author.profilePicture %>" alt="<%= comment.author.username %>" class="comment-avatar">
+                        <div class="comment-info">
+                            <span class="comment-username"><%= comment.author.username %></span>
+                            <span class="comment-date"><%= comment.date %></span>
+                        </div>
+                    </div>
+                    <div class="comment-content">
+                        <%= comment.content %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <div class="post-actions">
+        <a href="/" class="btn btn-secondary">Back to Home</a>
+    </div>
+</article>
+
+<script>
+async function handleLike(postId) {
+    if (!<%= currentUser ? 'true' : 'false' %>) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/post/${postId}/like`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+        
+        const likeButton = document.querySelector(`button[onclick="handleLike(${postId})"]`);
+        const dislikeButton = document.querySelector(`button[onclick="handleDislike(${postId})"]`);
+        
+        likeButton.classList.toggle('active');
+        dislikeButton.classList.remove('active');
+        
+        likeButton.querySelector('.likes-count').textContent = data.likes;
+        dislikeButton.querySelector('.dislikes-count').textContent = data.dislikes;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function handleDislike(postId) {
+    if (!<%= currentUser ? 'true' : 'false' %>) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/post/${postId}/dislike`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+        
+        const likeButton = document.querySelector(`button[onclick="handleLike(${postId})"]`);
+        const dislikeButton = document.querySelector(`button[onclick="handleDislike(${postId})"]`);
+        
+        dislikeButton.classList.toggle('active');
+        likeButton.classList.remove('active');
+        
+        likeButton.querySelector('.likes-count').textContent = data.likes;
+        dislikeButton.querySelector('.dislikes-count').textContent = data.dislikes;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+</script> 

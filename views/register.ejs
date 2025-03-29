@@ -1,0 +1,40 @@
+<div class="auth-container">
+    <div class="auth-box">
+        <h1 class="page-title">Register</h1>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+        
+        <form action="/register" method="POST" class="auth-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="profilePicture">Profile Picture</label>
+                <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="form-control">
+                <small class="form-text">Optional. Max file size: 5MB</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+        
+        <div class="auth-links">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+    </div>
+</div> 

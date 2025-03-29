@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Application</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">My Blog</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <% if (currentUser) { %>
+                    <a href="/new-post" class="nav-link">New Post</a>
+                    <div class="user-profile">
+                        <img src="<%= currentUser.profilePicture %>" alt="<%= currentUser.username %>" class="user-avatar">
+                        <span><%= currentUser.username %></span>
+                        <a href="/logout" class="nav-link">Logout</a>
+                    </div>
+                <% } else { %>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <%- body %>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 My Blog. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 
